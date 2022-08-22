@@ -1,0 +1,15 @@
+[package]
+name = "rust-challenge-payments"
+version = "1.0.0"
+authors = ["Jonathan Mercier-Ganady <jmgr@jmgr.info>"]
+description = "Processes a list of transaction and outputs the final state of clients"
+edition = "2021"
+
+[dependencies]
+csv = "1.1"
+serde = { version = "1", features = ["derive"] }
+rust_decimal = "1.26"
+clap = { version = "3.2", features = ["derive", "cargo"] }
+
+[dev-dependencies]
+rust_decimal_macros = "1.26"
