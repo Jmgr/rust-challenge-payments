@@ -17,8 +17,8 @@ should cover the most important cases. The function writing the clients' account
 state to stdio is not tested as this would be a bit more complicated due to the
 account lines' random order, but could definitely be done.
 
-The functions taking input and sending output data respectively use `Read` and a
-`Write` traits to allow for easier testing and more flexibility.
+The functions taking input and sending output data respectively use the `std::io::Read` and a
+`std::io::Write` traits to allow for easier testing and more flexibility.
 
 ```
 cargo test
