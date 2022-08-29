@@ -39,7 +39,7 @@ A possible improvement could be to add custom errors that could be processed
 easier by the caller, instead of just returning a string. This could allow
 adding more context to an error.
 
-This program is streaming data as much as possible and does not store all
+This program is processing data on the fly as much as possible and does not store all
 transactions in memory but only deposits and withdrawals since they are the
 only ones that can be refereed to by other transactions.
 
