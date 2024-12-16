@@ -12,7 +12,7 @@ fn test_invalid_input() {
 
 // Tests that a few deposits return the expected result
 #[test]
-fn test_deposits() -> Result<(), Box<dyn Error>> {
+fn test_deposits() -> Result<(), Error> {
     let input = r#"type, client, tx, amount
 	deposit, 1, 1, 1.0
 	deposit, 2, 2, 2.0
@@ -20,18 +20,18 @@ fn test_deposits() -> Result<(), Box<dyn Error>> {
     let result = process_transactions(input.as_bytes())?;
     assert_eq!(result.len(), 2);
     assert_eq!(
-        result.get(&1).unwrap(),
+        result.get(&ClientId(1)).unwrap(),
         &Client {
-            available_funds: dec!(3),
-            held_funds: dec!(0),
+            available_funds: dec!(3).into(),
+            held_funds: dec!(0).into(),
             is_locked: false,
         }
     );
     assert_eq!(
-        result.get(&2).unwrap(),
+        result.get(&ClientId(2)).unwrap(),
         &Client {
-            available_funds: dec!(2),
-            held_funds: dec!(0),
+            available_funds: dec!(2).into(),
+            held_funds: dec!(0).into(),
             is_locked: false,
         }
     );
@@ -41,7 +41,7 @@ fn test_deposits() -> Result<(), Box<dyn Error>> {
 
 // Test that deposits with invalid amounts are ignored
 #[test]
-fn test_invalid_deposits() -> Result<(), Box<dyn Error>> {
+fn test_invalid_deposits() -> Result<(), Error> {
     let input = r#"type, client, tx, amount
 	deposit, 1, 1, -1.0
 	deposit, 2, 2, 2.0
@@ -49,18 +49,18 @@ fn test_invalid_deposits() -> Result<(), Box<dyn Error>> {
     let result = process_transactions(input.as_bytes())?;
     assert_eq!(result.len(), 2);
     assert_eq!(
-        result.get(&1).unwrap(),
+        result.get(&ClientId(1)).unwrap(),
         &Client {
-            available_funds: dec!(2),
-            held_funds: dec!(0),
+            available_funds: dec!(2).into(),
+            held_funds: dec!(0).into(),
             is_locked: false,
         }
     );
     assert_eq!(
-        result.get(&2).unwrap(),
+        result.get(&ClientId(2)).unwrap(),
         &Client {
-            available_funds: dec!(2),
-            held_funds: dec!(0),
+            available_funds: dec!(2).into(),
+            held_funds: dec!(0).into(),
             is_locked: false,
         }
     );
@@ -72,18 +72,18 @@ fn test_invalid_deposits() -> Result<(), Box<dyn Error>> {
     let result = process_transactions(input.as_bytes())?;
     assert_eq!(result.len(), 2);
     assert_eq!(
-        result.get(&1).unwrap(),
+        result.get(&ClientId(1)).unwrap(),
         &Client {
-            available_funds: dec!(2),
-            held_funds: dec!(0),
+            available_funds: dec!(2).into(),
+            held_funds: dec!(0).into(),
             is_locked: false,
         }
     );
     assert_eq!(
-        result.get(&2).unwrap(),
+        result.get(&ClientId(2)).unwrap(),
         &Client {
-            available_funds: dec!(2),
-            held_funds: dec!(0),
+            available_funds: dec!(2).into(),
+            held_funds: dec!(0).into(),
             is_locked: false,
         }
     );
@@ -95,18 +95,18 @@ fn test_invalid_deposits() -> Result<(), Box<dyn Error>> {
     let result = process_transactions(input.as_bytes())?;
     assert_eq!(result.len(), 2);
     assert_eq!(
-        result.get(&1).unwrap(),
+        result.get(&ClientId(1)).unwrap(),
         &Client {
-            available_funds: dec!(2),
-            held_funds: dec!(0),
+            available_funds: dec!(2).into(),
+            held_funds: dec!(0).into(),
             is_locked: false,
         }
     );
     assert_eq!(
-        result.get(&2).unwrap(),
+        result.get(&ClientId(2)).unwrap(),
         &Client {
-            available_funds: dec!(2),
-            held_funds: dec!(0),
+            available_funds: dec!(2).into(),
+            held_funds: dec!(0).into(),
             is_locked: false,
         }
     );
@@ -116,7 +116,7 @@ fn test_invalid_deposits() -> Result<(), Box<dyn Error>> {
 
 // Tests that a deposits and withdrawals return the expected result
 #[test]
-fn test_withdrawals() -> Result<(), Box<dyn Error>> {
+fn test_withdrawals() -> Result<(), Error> {
     let input = r#"type, client, tx, amount
 	deposit, 1, 1, 1.0
 	deposit, 2, 2, 2.0
@@ -126,18 +126,18 @@ fn test_withdrawals() -> Result<(), Box<dyn Error>> {
     let result = process_transactions(input.as_bytes())?;
     assert_eq!(result.len(), 2);
     assert_eq!(
-        result.get(&1).unwrap(),
+        result.get(&ClientId(1)).unwrap(),
         &Client {
-            available_funds: dec!(1.5),
-            held_funds: dec!(0),
+            available_funds: dec!(1.5).into(),
+            held_funds: dec!(0).into(),
             is_locked: false,
         }
     );
     assert_eq!(
-        result.get(&2).unwrap(),
+        result.get(&ClientId(2)).unwrap(),
         &Client {
-            available_funds: dec!(2),
-            held_funds: dec!(0),
+            available_funds: dec!(2).into(),
+            held_funds: dec!(0).into(),
             is_locked: false,
         }
     );
@@ -148,7 +148,7 @@ fn test_withdrawals() -> Result<(), Box<dyn Error>> {
 // Tests a dispute and a resolve; try various invalid transactions and check
 // that they are ignored
 #[test]
-fn test_dispute_and_resolve() -> Result<(), Box<dyn Error>> {
+fn test_dispute_and_resolve() -> Result<(), Error> {
     let input = r#"type, client, tx, amount
     deposit,    1, 1,  2.0
     resolve,    1, 1
@@ -160,10 +160,10 @@ fn test_dispute_and_resolve() -> Result<(), Box<dyn Error>> {
     let result = process_transactions(input.as_bytes())?;
     assert_eq!(result.len(), 1);
     assert_eq!(
-        result.get(&1).unwrap(),
+        result.get(&ClientId(1)).unwrap(),
         &Client {
-            available_funds: dec!(2.5),
-            held_funds: dec!(0),
+            available_funds: dec!(2.5).into(),
+            held_funds: dec!(0).into(),
             is_locked: false,
         }
     );
@@ -177,10 +177,10 @@ fn test_dispute_and_resolve() -> Result<(), Box<dyn Error>> {
     let result = process_transactions(input.as_bytes())?;
     assert_eq!(result.len(), 1);
     assert_eq!(
-        result.get(&1).unwrap(),
+        result.get(&ClientId(1)).unwrap(),
         &Client {
-            available_funds: dec!(4),
-            held_funds: dec!(0),
+            available_funds: dec!(4).into(),
+            held_funds: dec!(0).into(),
             is_locked: false,
         }
     );
@@ -190,7 +190,7 @@ fn test_dispute_and_resolve() -> Result<(), Box<dyn Error>> {
 
 // Tests a dispute and a chargeback
 #[test]
-fn test_dispute_and_chargeback() -> Result<(), Box<dyn Error>> {
+fn test_dispute_and_chargeback() -> Result<(), Error> {
     let input = r#"type, client, tx, amount
 	deposit,    1, 1,  2.0
 	withdrawal, 1, 2,  1.5
@@ -200,10 +200,10 @@ fn test_dispute_and_chargeback() -> Result<(), Box<dyn Error>> {
     let result = process_transactions(input.as_bytes())?;
     assert_eq!(result.len(), 1);
     assert_eq!(
-        result.get(&1).unwrap(),
+        result.get(&ClientId(1)).unwrap(),
         &Client {
-            available_funds: dec!(-1),
-            held_funds: dec!(0),
+            available_funds: dec!(-1).into(),
+            held_funds: dec!(0).into(),
             is_locked: true,
         }
     );
